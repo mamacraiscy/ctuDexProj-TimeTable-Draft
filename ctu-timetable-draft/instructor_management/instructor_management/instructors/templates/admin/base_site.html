@@ -1,0 +1,23 @@
+{% extends "admin/base.html" %}
+{% load static %}  <!-- Load the staticfiles tag library -->
+
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="{% static 'admin_custom/custom_admin.css' %}">
+{% endblock %}
+
+{% block title %}My Custom Admin{% endblock %}
+
+{% block branding %}
+<div class="custom-header">
+    <img src="{% static 'img/ctu_logo.jpg' %}" alt="Logo" alt="Logo" style="height: 40px; width: auto; margin-right: 10px;"/> 
+    <span class = "span-title-admin" style="height: 10px; font-size: 30px;">Cebu Technology</span>
+</div>
+{% endblock %}
+
+{% block nav-global %}
+<ul class="custom-nav">
+    <li><a href="/admin/">Dashboard</a></li>
+    <li><a href="/">Visit Site</a></li>
+    <li><a href="/instructors/">Go Puclic View</a></li>
+</ul>
+{% endblock %}

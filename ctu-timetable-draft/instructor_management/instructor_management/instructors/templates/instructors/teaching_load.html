@@ -1,0 +1,254 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Teaching Load</title>
+    <!-- Include Bootstrap CSS and custom styles -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/teaching_load.css' %}">
+</head>
+<body>
+
+    <!-- Navbar Start -->
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <h3>Create Teaching Load</h3>
+
+        <!-- Instructor Input Above the Table -->
+        <div class="mb-4 position-relative">
+            <label for="instructor" class="form-label">Instructor</label>
+            <input type="text" id="instructor" class="form-control" placeholder="Enter instructor name">
+            <div id="suggestions" class="suggestions-list" style="display:none; position:absolute; z-index:1000;"></div>
+        </div>
+
+        <!-- Display Instructor Info (Course, Availability Times, Availability Days) -->
+        <div id="instructor-info" class="mb-4" style="display:none;">
+            <h5>Instructor Info:</h5>
+            <p><strong>Course:</strong> <span id="course-info"></span></p>
+            <p><strong>Availability Times:</strong> <span id="availability-times-info"></span></p>
+            <p><strong>Availability Days:</strong> <span id="availability-days-info"></span></p>
+        </div>
+        
+        <table class="table table-bordered" id="teaching-load-table">
+            <thead>
+                <tr>
+                    <th class="col-course">Course</th>
+                    <th class="col-description">Description</th>
+                    <th class="col-hours">Total Hours</th>
+                    <th class="col-time">Scheduled Time</th>
+                    <th class="col-day">Scheduled Day</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    <td class="editable course-cell col-course" data-column="course"></td>
+                    <td class="editable description-cell col-description" data-column="description"></td>
+                    <td class="editable hours-cell col-hours" data-column="hours"></td>
+                    <td class="editable time-cell col-time" data-column="time"></td>
+                    <td class="editable day-cell col-day" data-column="day"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <!-- Button to Save Teaching Load -->
+        <button id="save-csv" class="btn btn-primary">Download as a CSV file</button>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            // --- Instructor Search and Suggestions ---
+            $('#instructor').on('input', function() {
+                var query = $(this).val();
+    
+                if (query.length > 0) {
+                    $.ajax({
+                        url: "{% url 'get_suggestions' %}",
+                        data: { 'column': 'instructor', 'q': query },
+                        success: function(data) {
+                            var dropdown = $('<ul class="suggestions-list"></ul>');
+                            $('#instructor').next('.suggestions-list').remove();
+                            dropdown.empty();
+    
+                            data.results.forEach(function(item) {
+                                dropdown.append('<li data-id="' + item.id + '">' + item.name + '</li>');
+                            });
+    
+                            $('#instructor').after(dropdown);
+    
+                            // Handle click on a suggestion item
+                            dropdown.find('li').on('click', function() {
+                                var selectedInstructor = $(this).text();
+                                var selectedId = $(this).data('id');
+                                $('#instructor').val(selectedInstructor);
+                                dropdown.remove();
+                                updateInstructorTable(selectedId); // Update table with selected instructor data
+                            });
+    
+                            // Hide dropdown on click outside
+                            $(document).on('click', function(e) {
+                                if (!$(e.target).closest('.suggestions-list, #instructor').length) {
+                                    dropdown.remove();
+                                }
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error fetching suggestions:", error);
+                        }
+                    });
+                } else {
+                    $('.suggestions-list').remove();
+                }
+            });
+    
+            // Function to update the table with instructor's details
+            function updateInstructorTable(instructorId) {
+                $.ajax({
+                    url: "{% url 'editable_instructor_details' %}",
+                    data: { 'id': instructorId },
+                    success: function(data) {
+                        // Clear the table body before inserting new data
+                        $('#teaching-load-table tbody').empty();
+    
+                        var qualifiedCourses = data.qualified_courses;
+                        var availabilityDays = data.availability_days;
+                        var availabilityTimes = data.availability_times;
+    
+                        // Determine the maximum number of rows needed
+                        var rowCount = Math.max(qualifiedCourses.length, availabilityDays.length, availabilityTimes.length);
+    
+                        // Populate each row with an empty cell for data selection
+                        for (var i = 0; i < rowCount; i++) {
+                            var course = qualifiedCourses[i] || "";
+                            var day = availabilityDays[i] || "";
+                            var time = availabilityTimes[i] || "";
+    
+                            var row = `<tr>
+                                <td class="editable course-cell" data-options="${qualifiedCourses.join(',')}" data-column="course"></td>
+                                <td class="editable description-cell" data-column="description"></td>
+                                <td class="editable hours-cell" data-column="hours"></td>
+                                <td class="editable time-cell" data-options="${availabilityTimes.join(',')}" data-column="time"></td>
+                                <td class="editable day-cell" data-options="${availabilityDays.join(',')}" data-column="day"></td>
+                            </tr>`;
+    
+                            $('#teaching-load-table tbody').append(row);
+                        }
+    
+                        // Rebind editable cells after new rows are added
+                        bindEditableCells();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error updating instructor table:", error);
+                    }
+                });
+            }
+    
+            // Function to create dropdown HTML with 'X' button
+            function createDropdownHTML(options) {
+                // Create dropdown with a surrounding container and clear button
+                var dropdown = `<div class="dropdown-container">
+                                    <select class="form-control">
+                                        <option value="" selected>Select an option</option>`; // Default blank option
+    
+                options.forEach(function(option) {
+                    dropdown += `<option value="${option}">${option}</option>`;
+                });
+    
+                dropdown += `</select><span class="clear-button">&times;</span></div>`; // Clear button '×' symbol
+                return dropdown;
+            }
+    
+            // Function to bind the dropdowns with clear button functionality
+            function bindEditableCells() {
+                $('.editable').off('click').on('click', function(e) {
+                    var cell = $(this);
+                    var options = cell.data('options') ? cell.data('options').split(',') : [];
+    
+                    // Prevent the dropdown from closing if it's clicked again
+                    e.stopPropagation();
+    
+                    // If there are options, create the dropdown
+                    if (options.length > 0) {
+                        if (!cell.find('select').length) {
+                            var dropdown = createDropdownHTML(options);
+                            cell.html(dropdown); // Insert the dropdown
+                            cell.find('select').focus(); // Focus on the dropdown
+    
+                            // Show the clear button if a selection is made
+                            cell.find('select').on('change', function() {
+                                var selectedValue = $(this).val();
+                                if (selectedValue !== '') {
+                                    cell.addClass('has-value'); // Show 'X' button
+                                } else {
+                                    cell.removeClass('has-value'); // Hide 'X' button
+                                }
+                            });
+    
+                            // Handle clicking the 'X' button
+                            cell.find('.clear-button').on('click', function() {
+                                cell.removeClass('has-value'); // Hide 'X' button
+                                cell.find('select').val(''); // Clear the dropdown
+                                cell.html(''); // Empty the cell content
+                            });
+                        }
+                    }
+                });
+    
+                // Close dropdown when clicking outside the table
+                $(document).on('click', function(e) {
+                    if (!$(e.target).closest('#teaching-load-table').length) {
+                        $('select').each(function() {
+                            $(this).closest('td').html($(this).val()); // Return selected value if the dropdown is clicked outside
+                        });
+                    }
+                });
+            }
+    
+            // Function to save table data as CSV
+            function saveTableAsCSV() {
+                var csv = [];
+                var rows = $('#teaching-load-table tbody tr');
+                
+                rows.each(function() {
+                    var row = [];
+                    $(this).find('td').each(function() {
+                        var cellValue = $(this).text().trim();
+                        row.push(cellValue);
+                    });
+                    csv.push(row.join(','));
+                });
+                
+                // Generate CSV content as a string
+                var csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
+                
+                // Create a link to trigger the download
+                var encodedUri = encodeURI(csvContent);
+                var link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "teaching_load.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+    
+            // Bind save CSV button click
+            $('#save-csv-btn').on('click', function() {
+                saveTableAsCSV();
+            });
+    
+            // Initial bind for editable cells
+            bindEditableCells();
+        });
+    </script>
+    
+    
+    
+</body>
+</html>

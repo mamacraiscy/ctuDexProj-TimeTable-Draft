@@ -1,0 +1,329 @@
+body {
+    overflow-x: hidden; /* Prevent horizontal scrolling for the whole body */
+}
+/* Search Form Styling */
+#search-form {
+display: flex;
+align-items: center;
+justify-content: space-between;
+width: 100%;
+max-width: 700px; /* Adjust based on preference */
+margin: 0 auto;
+background-color: #e7e0e059; /* Light background for the whole search form */
+border-radius: 45px;
+padding: 10px;
+}
+
+/* Styling for the input field */
+#search-input {
+flex-grow: 1;
+border: none;
+border-radius: 25px;
+padding: 10px;
+outline: none;
+font-size: 14px;
+}
+
+/* Search Button */
+.filter-btn, #filter-btn {
+background-color: #007bff; /* Blue button */
+color: white;
+border-radius: 25px;
+padding: 5px 15px;
+margin-left: 10px;
+border: none;
+outline: none;
+cursor: pointer;
+}
+
+/* Suggestions box styling */
+#suggestions {
+    position: absolute; /* Position relative to the parent */
+    top: calc(100% + 5px); /* Directly below the input, with a small gap */
+    left: 0;
+    width: 100%; /* Match the width of the search input */
+    z-index: 1000; /* Ensure it stays above other content */
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a shadow for better visibility */
+    display: inline-block; /* Initially hidden */
+}
+
+/* Show the suggestions box when there are results */
+.suggestions-visible {
+display: block; /* Show when suggestions are available */
+}
+
+/* Individual suggestion item styling */
+.suggestion-item {
+padding: 10px;
+cursor: pointer;
+border-bottom: 1px solid #ccc;
+}
+
+.suggestion-item:hover {
+background-color: #f0f0f0;
+}
+
+
+/* Ensure the buttons align with the search field */
+#search-form button {
+margin-left: 15px; /* Add small space between buttons */
+}
+
+
+
+/* Button margins for better spacing */
+.filter-btn {
+    margin-left: 10px; /* Space between the input and buttons */
+}
+
+#filter-btn {
+    margin-left: 10px;
+}
+
+/* Responsive handling for smaller screens */
+@media (max-width: 768px) {
+    #search-form-inner {
+        flex-direction: column; /* Stack search and buttons vertically */
+    }
+
+    #search-input {
+        margin-bottom: 10px; /* Add space between the input and buttons */
+    }
+
+    .filter-btn,
+    #filter-btn {
+        width: 100%; /* Make buttons full-width on smaller screens */
+        margin-left: 0;
+    }
+}
+
+
+/* Layout styling */
+.container {    
+    margin-left: 12%;
+    margin-top: 20px;
+}
+
+.main-header {
+    height: 100px; /* Set header height */
+    background-color: #80b7ee; /* Background color */
+    margin-bottom: 20px;
+}
+
+.main-header .logo {
+    font-size: 20px; /* Logo font size */
+    line-height: 10px; /* Align text */
+}
+
+#filter-panel {
+    position: absolute;
+    right: -1500px; /* Hidden by default */
+    top: 200px;
+    width: 300px;
+    background-color: #f8f9fa;
+    border-left: 1px solid #ccc;
+    padding: 20px;
+    transition: right 0.5s ease;
+}
+
+#filter-panel.active {
+    right: 0; /* Slide in the filter panel */
+}
+
+
+/* Add to your instructor_list.css file or inside a <style> tag */
+.instructor-items-container {
+    max-height: 400px;  /* Adjust this value based on your design */
+    overflow-y: auto;   /* Enables vertical scrolling */
+    padding-right: 15px; /* Optional, adds some padding to prevent the scrollbar from covering content */
+}
+
+/* Optionally, style the scrollbar for better appearance (for webkit browsers) */
+.instructor-items-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.instructor-items-container::-webkit-scrollbar-thumb {
+    background-color: darkgray;
+    border-radius: 10px;
+}
+
+.instructor-items-container::-webkit-scrollbar-track {
+    background-color: lightgray;
+}
+
+
+/* Sticky header for instructors */
+.instructor-header {
+    display: flex;
+    justify-content: space-between; /* Push the label and count to opposite sides */
+    align-items: center;
+    margin-bottom: 10px; /* Add space between the header and the list */
+    font-size: 13px;
+    position: sticky;
+    top: 0;  /* Ensures it stays at the top of its container */
+    background-color: white; /* Optional: ensures visibility when scrolling */
+    z-index: 10; /* Keeps the header on top of the list */
+    padding: 10px; /* Optional: Add padding for better spacing */
+    border-bottom: 1px solid #ccc; /* Optional: a subtle border at the bottom */
+}
+
+/* Side panel for instructors with scrollable content */
+#instructor-list {
+    width: 25%;
+    border: 1px solid #ccc;
+    padding: 10px;
+    height: 400px; /* Set a fixed height to make the container scrollable */
+    overflow-y: auto; /* Enables vertical scrolling */
+    margin-right: 2%; /* Space on the right */
+    margin-top: 25px; /* Space on the top */
+    margin: auto;
+}
+
+/* Results panel */
+#results-pane {
+    margin-top: 25px; /* Space from the top */
+    height: 450px;
+    border: 2px solid #ccc;
+    padding: 10px;
+    overflow-y: scroll;
+    background-color: #ffffff; /* Light background for contrast */
+    float: left; /* Align to right */
+    width: 80%; /* Set width to take remaining space */
+    margin-left: 100px;
+}
+
+.instructor-image {
+    width: 100px; /* Adjust size as needed */
+    height: 100px;
+    border-radius: 50%; /* Optional: Make the image circular */
+    border: 2px solid black; /* Black border around image */
+    background-color: darkgrey; /* Dark grey background for visibility */
+}
+
+.instructor-details {
+    position: relative; /* Allows absolute positioning of the image */
+    padding: 10px; /* Adds padding around the details */
+    border: solid black;
+}
+
+/* Instructor info in the list */
+.instructor-list-item img {
+    width: 30px; /* Adjusted width */
+    height: 30px; /* Adjusted height */
+    border-radius: 50%;  /* Circular profile picture */
+    margin-right: 10px;
+    object-fit: cover;
+}
+
+.instructor-list-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.instructor-list-item:hover {
+    background-color: #e6f7ff; /* Light blue background on hover */
+    cursor: pointer; /* Pointer cursor to indicate clickable */
+}
+
+.instructor-name {
+    font-size: 16px;
+    font-weight: bold;
+}   
+
+.filter-btn {
+    margin-right: 20px;
+}
+
+.bottom-buttons {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.bottom-buttons button {
+    margin: 0 5px;
+}
+
+
+#search-input {
+    flex: 1; /* Take up available space */
+    margin-right: 5px; /* Space between input and buttons */
+}
+.navbar .dropdown-toggle::after {
+    border: none;
+    content: "\f107";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    vertical-align: middle;
+    margin-left: 8px;
+}
+.custom-navbar-text {
+    color:#dbb356; /* Replace with your desired color */
+}
+.navbar-light .navbar-nav .nav-link {
+    margin-right: 30px;
+    padding: 25px 0;
+    color: #491919;
+    font-size: 15px;
+    text-transform: uppercase;
+    outline: none;
+}
+
+.navbar-light .navbar-nav .nav-link:hover,
+.navbar-light .navbar-nav .nav-link.active {
+    color: var(--primary);
+}
+
+@media (max-width: 991.98px) {
+    .navbar-light .navbar-nav .nav-link  {
+        margin-right: 0;
+        padding: 10px 0;
+    }
+
+    .navbar-light .navbar-nav {
+        border-top: 1px solid #EEEEEE;
+    }
+}
+
+.navbar-light .navbar-brand,
+.navbar-light a.btn {
+    height: 75px;
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: var(--dark);
+    font-weight: 500;
+}
+
+.navbar-light.sticky-top {
+    top: -100px;
+    transition: .5s;
+}
+
+@media (min-width: 992px) {
+    .navbar .nav-item .dropdown-menu {
+        display: block;
+        margin-top: 0;
+        opacity: 0;
+        visibility: hidden;
+        transition: .5s;
+    }
+
+    .navbar .dropdown-menu.fade-down {
+        top: 100%;
+        transform: rotateX(-75deg);
+        transform-origin: 0% 0%;
+    }
+
+    .navbar .nav-item:hover .dropdown-menu {
+        top: 100%;
+        transform: rotateX(0deg);
+        visibility: visible;
+        transition: .5s;
+        opacity: 1;
+    }
+}

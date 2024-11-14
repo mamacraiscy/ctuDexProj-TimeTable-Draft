@@ -1,0 +1,310 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructors</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/instructor_list.css' %}">
+   
+</head>
+<body>
+ <!-- Navbar Start -->
+    <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
+        <a href="{% url 'index' %}" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
+            <img src="{% static 'img/ctu_logo.jpg' %}" alt="Logo" style="height: 40px; margin-right: 10px;">
+            <h2 class="m-0 custom-navbar-text"><i class=""></i>CTU AutoTeaching Loads</h2>
+        </a>
+        <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto p-4 p-lg-0">
+                <a href="{% url 'index' %}" class="nav-item nav-link active">Home</a>
+                <a href="{% url 'instructor_list' %}" class="nav-item nav-link">Instructor</a>
+                <a href="" class="nav-item nav-link">Courses</a>
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                    <div class="dropdown-menu fade-down m-0">
+                        <a href="" class="dropdown-item">Our Team</a>
+                        <a href="" class="dropdown-item">Testimonial</a>
+                        <a href="" class="dropdown-item">404 Page</a>
+                    </div>
+                </div>
+                <a href="" class="nav-item nav-link">Create</a>
+            </div>
+            <a href="" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">Log In / Sign up<i class="fa fa-arrow-right ms-3"></i></a>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+
+    <!-- Search Form -->
+    <div id="search-form" class="d-flex justify-content-center align-items-center mt-4">
+        <form method="GET" action="{% url 'instructor_list' %}" class="d-flex w-100 justify-content-center" id="search-form-inner" style="position: relative;">
+            <input type="text" id="search-input" name="q" placeholder="Search for Instructor" class="form-control" autocomplete="off" value="{{ query }}">
+            <div id="suggestions" class="suggestions-box"></div> <!-- Suggestions box -->
+            <button type="submit" class="btn btn-primary ml-2">Search</button>
+            <button type="button" class="btn btn-secondary ml-2" id="filter-btn">Filter</button>
+        </form>
+    </div>
+    
+
+    <!-- Main Content -->
+    <div class="container d-flex">
+        <div id="instructor-list" class="mt-4">
+            <div class="instructor-header">
+                <h5>Instructors</h5>
+                <span>{{ total_instructors }}</span> <!-- Display the total number of instructors here -->
+            </div>
+            <!-- Scrollable container for instructor items -->
+            <div id="instructor-items" class="instructor-items-container">
+                {% for instructor in instructors %}  
+                    <div class="instructor-list-item" data-id="{{ instructor.instructor_id }}"> 
+                        <img src="{% static 'img/about.jpg' %}" alt="Default Image" style="width: 10px; height: auto;">
+                        {{ instructor.first_name }} {{ instructor.last_name }} {% if instructor.middle_initial %}{{ instructor.middle_initial }}.{% endif %}
+                    </div>
+                {% empty %}  <!-- Optional: Add a message if no instructors are found -->
+                    <p>No instructors found.</p>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Results Pane -->
+        <div id="results-pane" class="mt-4">
+            <h5>Results panel</h5>
+            <hr>
+            <div id="instructor-details"></div>
+        </div>
+    </div>
+
+    <!-- Bottom buttons -->
+    <div class="bottom-buttons">
+        <button class="btn btn-primary" id="previous-btn">Previous</button>
+        <button class="btn btn-secondary" id="print-btn">Print</button>
+        <button class="btn btn-success" id="download-btn">Download</button>
+    </div>
+    <!-- Filter panel (slide-in) -->
+    <div id="filter-panel">
+        <form method="GET" action="{% url 'instructor_list' %}" id="filter-form">
+            <h5>Employment Type</h5>
+            <div class="form-group">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="filter" id="default" value="ALL" {% if filter == 'ALL' %}checked{% endif %}>
+                    <label class="form-check-label" for="default">All</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="filter" id="regular" value="REGULAR" {% if filter == 'REGULAR' %}checked{% endif %}>
+                    <label class="form-check-label" for="regular">Regular</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="filter" id="cos" value="COS" {% if filter == 'COS' %}checked{% endif %}>
+                    <label class="form-check-label" for="cos">COS</label>
+                </div>
+            </div>
+
+            <h5>Department Type</h5>
+            <div class="form-group">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="department" id="cot" value="COT" {% if department == 'COT' %}checked{% endif %}>
+                    <label class="form-check-label" for="cot">College of Technology (COT)</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="department" id="coed" value="COED" {% if department == 'COED' %}checked{% endif %}>
+                    <label class="form-check-label" for="coed">College of Education (COED)</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="department" id="coeng" value="COENG" {% if department == 'COENG' %}checked{% endif %}>
+                    <label class="form-check-label" for="coeng">College of Engineering (COENG)</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="department" id="comgent" value="COMGENT" {% if department == 'COMGENT' %}checked{% endif %}>
+                    <label class="form-check-label" for="comgent">College of Management and Entrepreneurship (COMGENT)</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block mt-4">Apply</button>
+        </form>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            // Toggle filter panel
+            $('#filter-btn').click(function() {
+                $('#filter-panel').toggleClass('active');
+            });
+    
+            // Fetch suggestions as the user types in the search input
+            $("#search-input").keyup(function() {
+                var query = $(this).val();
+                var filter = $('input[name="filter"]:checked').val();
+    
+                if (query.length > 1) {
+                    $.ajax({
+                        url: "{% url 'instructor_search' %}",
+                        data: {
+                            'q': query,
+                            'filter': filter
+                        },
+                        success: function(data) {
+                            $("#suggestions").html('');  // Clear previous suggestions
+                            if (data.results.length > 0) {
+                                $("#suggestions").addClass('suggestions-visible'); // Show suggestions
+                                data.results.forEach(function(item) {
+                                    $("#suggestions").append('<div class="suggestion-item" data-id="' + item.id + '">' + item.name + '</div>');
+                                });
+                            } else {
+                                $("#suggestions").removeClass('suggestions-visible'); // Hide if no results
+                                $("#suggestions").append('<div class="suggestion-item">No suggestions found.</div>');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error fetching suggestions:", error); // Log any errors
+                            $("#suggestions").removeClass('suggestions-visible'); // Hide suggestions on error
+                        }
+                    });
+                } else {
+                    $("#suggestions").removeClass('suggestions-visible');  // Hide suggestions if input length is less than 2
+                }
+            });
+    
+            // Flag to track whether a suggestion item was clicked
+            let suggestionClicked = false;
+    
+            // When a suggestion is clicked, fetch instructor details
+            $(document).on('click', '.suggestion-item', function() {
+                suggestionClicked = true; // Set flag to true when clicking on a suggestion
+                var instructorId = $(this).data('id');
+                $.ajax({
+                    url: "{% url 'instructor_details' %}",
+                    data: {
+                        'id': instructorId
+                    },
+                    success: function(data) {
+                        $("#instructor-details").html(data.html);  // Populate results pane
+                        $("#suggestions").empty();  // Clear suggestions
+                        $("#search-input").val('');  // Clear search input
+                    }
+                });
+            });
+    
+            // Click event for instructor list items in the side panel
+            $(document).on('click', '.instructor-list-item', function() {
+                var instructorId = $(this).data('id');  // Get the instructor ID from data attribute
+                $.ajax({
+                    url: "{% url 'instructor_details' %}",
+                    data: {
+                        'id': instructorId
+                    },
+                    success: function(data) {
+                        $("#instructor-details").html(data.html);  // Populate results pane
+                        $("#suggestions").empty();  // Clear suggestions
+                        $("#search-input").val('');  // Clear search input
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error fetching instructor details:", error); // Log any errors
+                    }
+                }); 
+            });
+    
+            // Reset search input when a new filter is selected
+            $('#filter-form input[type="radio"]').change(function() {
+                $("#search-input").val('');  // Clear the search input
+                $("#suggestions").empty();  // Clear suggestions
+            });
+    
+            // Hide suggestions when the input loses focus
+            $("#search-input").on('blur', function() {
+                // Delay the hiding of suggestions to allow for click event on suggestion
+                setTimeout(function() {
+                    if (!suggestionClicked) { // Only hide if no suggestion was clicked
+                        $("#suggestions").removeClass('suggestions-visible'); // Hide suggestions when focus is lost
+                        $("#suggestions").empty(); // Clear suggestions on blur
+                    }
+                    suggestionClicked = false; // Reset the flag for next interaction
+                }, 100); // Delay to allow click event to register
+            });
+    
+            // Show suggestions when the input gains focus
+            $("#search-input").on('focus', function() {
+                var query = $(this).val();
+                var filter = $('input[name="filter"]:checked').val();
+                // If there's a query and suggestions were previously shown, show them again
+                if (query.length > 1) {
+                    $.ajax({
+                        url: "{% url 'instructor_search' %}",
+                        data: {
+                            'q': query,
+                            'filter': filter
+                        },
+                        success: function(data) {
+                            $("#suggestions").html('');  // Clear previous suggestions
+                            if (data.results.length > 0) {
+                                $("#suggestions").addClass('suggestions-visible'); // Show suggestions
+                                data.results.forEach(function(item) {
+                                    $("#suggestions").append('<div class="suggestion-item" data-id="' + item.id + '">' + item.name + '</div>');
+                                });
+                            } else {
+                                $("#suggestions").removeClass('suggestions-visible'); // Hide if no results
+                                $("#suggestions").append('<div class="suggestion-item">No suggestions found.</div>');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error fetching suggestions:", error); // Log any errors
+                        }
+                    });
+                }
+            });
+    
+            // Clear suggestions when the input is cleared
+            $("#search-input").on('input', function() {
+                if ($(this).val().length === 0) {
+                    $("#suggestions").removeClass('suggestions-visible'); // Hide suggestions when input is empty
+                    $("#suggestions").empty(); // Clear suggestions
+                }
+            });
+        });
+
+    // Previous Button: Go back to the previous page
+    document.getElementById('previous-btn').addEventListener('click', function() {
+        window.history.back();  // Goes to the previous page if any
+    });
+
+    // Print Button: Open the browser's print dialog
+    document.getElementById('print-btn').addEventListener('click', function() {
+        window.print();  // Opens the print dialog
+    });
+
+    // Download Button: Trigger a file download with data from the results pane
+    document.getElementById('download-btn').addEventListener('click', function() {
+        // Extract data from the instructor details panel
+        const detailsContainer = document.getElementById('instructor-details');
+        const instructorName = detailsContainer.querySelector('h5') ? detailsContainer.querySelector('h5').innerText : "No Instructor Selected";
+        
+        // Assuming details are displayed in paragraphs, modify as necessary
+        const instructorDetails = detailsContainer.querySelectorAll('p');
+        const detailsArray = Array.from(instructorDetails).map(p => p.innerText).join(', ');
+        
+        // Prepare CSV content
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "Instructor Name, Details\n"; // Header row
+        csvContent += `${instructorName}, ${detailsArray}\n`; // Data row
+
+        // Create a link element, set it up for download, and click it programmatically
+        const link = document.createElement("a");
+        link.setAttribute("href", encodeURI(csvContent));
+        link.setAttribute("download", "instructor_details.csv");  // Name of the file
+        document.body.appendChild(link);  // Required for Firefox
+
+        link.click();  // Trigger the download
+        document.body.removeChild(link);  // Clean up
+    });
+    </script>
+    
+</body>
+</html>

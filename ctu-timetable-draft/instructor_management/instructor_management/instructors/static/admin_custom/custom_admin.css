@@ -1,0 +1,26 @@
+/* Custom header style */
+.custom-header {
+  background-color: #2e3b4e;
+  color: white;
+  padding: 10px;
+  text-align: center;
+}
+
+/* Custom navigation menu */
+.custom-nav {
+  background-color: #1e3d59;
+  color: white;
+  padding: 10px;
+}
+
+.custom-nav li {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+/* Modify other parts of the admin panel */
+.module {
+  background-color: #f8f8f8;
+  border-radius: 10px;
+  padding: 20px;
+}

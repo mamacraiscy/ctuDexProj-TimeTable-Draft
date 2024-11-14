@@ -1,0 +1,10 @@
+/* Style for required fields */
+.required label::after {
+  content: " *";  /* Add asterisk */
+  color: red;     /* Color of asterisk */
+}
+
+/* Style for error messages */
+.errorlist {
+  color: red;  /* Color of error messages */
+}

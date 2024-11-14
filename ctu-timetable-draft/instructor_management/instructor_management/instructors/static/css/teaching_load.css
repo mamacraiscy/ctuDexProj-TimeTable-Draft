@@ -1,0 +1,153 @@
+:root {
+    --primary:  #001F3D; /*Midnight Blue */
+    --secondary: #045174; /*Navy Blue*/
+    --border: #D89C60; /*Desert Sun*/
+    --text: #E87A00;  /* Burnt Orange */
+    --default: #fff; /*default color*/
+    --default2: #000; /*Default black*/
+}
+
+body {
+    text-align: center;
+    background-color: var(--default);
+}
+
+h1,h2,h3,p {
+    font-weight: bold;
+    color: var(--text) ;
+}
+
+.suggestions-list {
+    list-style-type: none; /* Removes bullets or dots */
+    padding: 0; /* Removes default padding */
+    margin: 0; /* Removes default margin */
+    background-color: var(--default); /* Matches body color */
+    border: 1px solid var(--border); /* Optional: adds a border */
+}
+
+.suggestions-item {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.suggestions-item:hover {
+    background-color: var(--primary); /* Highlights on hover */
+    color: var(--default);
+}
+
+.suggestions-container {
+    position: relative;
+}
+
+.suggestions-list {
+    position: absolute;
+    top: 100%; /* Positions directly below the input */
+    left: 0;
+    right: 0;
+    max-height: 200px; /* Sets a max height for scrolling */
+    overflow-y: auto; /* Enables scrolling if needed */
+    background-color: var(--default);
+    border: 1px solid var(--border);
+    z-index: 1000; /* Keeps it above other elements */
+}
+
+/* Table Styles */
+#teaching-load-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#teaching-load-table thead th {
+    text-align: center;
+    background-color: var(--primary);
+    color: var(--default);
+    padding: 10px;
+    font-weight: bold;
+}
+
+#teaching-load-table tbody td {
+    padding: 10px;
+    text-align: center;
+    color: var(--default2);
+}
+
+/* Responsive and adjustable column widths */
+#teaching-load-table .col-course { width: 20%; }  /* Adjust as needed */
+#teaching-load-table .col-description { width: 50%; }
+#teaching-load-table .col-hours { width: 10%; }
+#teaching-load-table .col-time { width: 20%; }
+#teaching-load-table .col-day { width: 15%; }
+
+
+/* Hide the dropdown button in <select> elements */
+select {
+    -webkit-appearance: none; /* Remove the default dropdown arrow in WebKit browsers */
+    -moz-appearance: none; /* Firefox */
+    appearance: none; /* Standard CSS */
+    background: transparent; /* Remove background */
+    border: none; /* Remove border */
+    color: inherit; /* Make text color inherit from the parent */
+    padding: 0; /* Remove padding */
+    font-size: inherit; /* Make font size inherit from parent */
+    cursor: pointer; /* Indicate that it's clickable */
+}
+
+/* Style the select box to look like a plain text box */
+select:focus {
+    outline: none; /* Remove focus outline */
+}
+
+/* Option styling for when the dropdown is visible */
+select option {
+    background-color: var(--default);
+    color: #000;
+    padding: 5px;
+}
+
+/* Add a custom 'down' arrow icon */
+select::-ms-expand {
+    display: none; /* Remove default arrow in IE */
+}
+
+/* Optional: Add some styling to make the dropdown less 'button-like' */
+.editable {
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.editable select {
+    width: 100%;
+    background-color: transparent; /* Make background transparent */
+    padding: 5px; /* Add padding to make it look like text */
+    text-align: left; /* Align text to the left */
+}
+
+/* Style for the dropdown container */
+.dropdown-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+/* Style for the dropdown select */
+.dropdown-container select {
+    width: 100%;
+    padding-right: 25px; /* Space for the clear button */
+}
+
+/* Style for the clear 'X' button outside the dropdown */
+.clear-button {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #999;
+    cursor: pointer;
+    display: none; /* Initially hidden */
+}
+
+/* Show 'X' when the dropdown has a value */
+.dropdown-container.has-value .clear-button {
+    display: inline;
+}
